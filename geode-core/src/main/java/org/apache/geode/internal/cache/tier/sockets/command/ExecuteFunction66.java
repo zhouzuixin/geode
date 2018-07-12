@@ -37,7 +37,7 @@ import org.apache.geode.internal.cache.TXManagerImpl;
 import org.apache.geode.internal.cache.TXStateProxy;
 import org.apache.geode.internal.cache.execute.AbstractExecution;
 import org.apache.geode.internal.cache.execute.FunctionContextImpl;
-import org.apache.geode.internal.cache.execute.FunctionStats;
+import org.apache.geode.internal.cache.execute.FunctionStatsImpl;
 import org.apache.geode.internal.cache.execute.InternalFunctionInvocationTargetException;
 import org.apache.geode.internal.cache.execute.MemberMappedArgument;
 import org.apache.geode.internal.cache.execute.ServerToClientFunctionResultSender;
@@ -54,6 +54,7 @@ import org.apache.geode.internal.i18n.LocalizedStrings;
 import org.apache.geode.internal.logging.log4j.LocalizedMessage;
 import org.apache.geode.internal.security.AuthorizeRequest;
 import org.apache.geode.internal.security.SecurityService;
+import org.apache.geode.stats.common.internal.cache.execute.FunctionStats;
 
 /**
  * @since GemFire 6.6
@@ -84,14 +85,14 @@ public class ExecuteFunction66 extends BaseCommand {
   public void cmdExecute(final Message clientMessage, final ServerConnection serverConnection,
       final SecurityService securityService, long start) throws IOException {
     Object function = null;
-    Object args = null;
+    Object args;
     MemberMappedArgument memberMappedArg = null;
-    String[] groups = null;
+    String[] groups;
     byte hasResult = 0;
-    byte functionState = 0;
+    byte functionState;
     boolean isReexecute = false;
-    boolean allMembers = false;
-    boolean ignoreFailedMembers = false;
+    boolean allMembers;
+    boolean ignoreFailedMembers;
     int functionTimeout = ConnectionImpl.DEFAULT_CLIENT_FUNCTION_TIMEOUT;
     try {
       byte[] bytes = clientMessage.getPart(0).getSerializedForm();
@@ -153,8 +154,20 @@ public class ExecuteFunction66 extends BaseCommand {
     }
 
     // Execute function on the cache
+    executeFunctionOnCache(clientMessage, serverConnection, securityService, function, args,
+        memberMappedArg, groups, hasResult, functionState, isReexecute, allMembers,
+        ignoreFailedMembers,
+        functionTimeout);
+  }
+
+  private void executeFunctionOnCache(Message clientMessage, ServerConnection serverConnection,
+      SecurityService securityService, Object function, Object args,
+      MemberMappedArgument memberMappedArg, String[] groups,
+      byte hasResult, byte functionState, boolean isReexecute,
+      boolean allMembers, boolean ignoreFailedMembers,
+      int functionTimeout) throws IOException {
     try {
-      Function<?> functionObject = null;
+      Function<?> functionObject;
       if (function instanceof String) {
         functionObject = FunctionService.getFunction((String) function);
         if (functionObject == null) {
@@ -183,7 +196,7 @@ public class ExecuteFunction66 extends BaseCommand {
         functionObject = (Function) function;
       }
 
-      FunctionStats stats = FunctionStats.getFunctionStats(functionObject.getId());
+      FunctionStats stats = FunctionStatsImpl.getFunctionStats(functionObject.getId());
 
       // check if the caller is authorized to do this operation on server
       functionObject.getRequiredPermissions(null).forEach(securityService::authorize);

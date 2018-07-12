@@ -29,9 +29,9 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.mockito.ArgumentCaptor;
 
-import org.apache.geode.Statistics;
-import org.apache.geode.StatisticsFactory;
-import org.apache.geode.StatisticsType;
+import org.apache.geode.stats.common.statistics.Statistics;
+import org.apache.geode.stats.common.statistics.StatisticsFactory;
+import org.apache.geode.stats.common.statistics.StatisticsType;
 import org.apache.geode.test.junit.categories.LuceneTest;
 
 @Category({LuceneTest.class})
@@ -44,7 +44,9 @@ public class LuceneIndexStatsJUnitTest {
   @Before
   public void createStats() {
     StatisticsFactory statsFactory = mock(StatisticsFactory.class);
+    StatisticsType statsType = mock(StatisticsType.class);
     statistics = mock(Statistics.class);
+    when(statsFactory.createType(any(), any(), any())).thenReturn(statsType);
     when(statsFactory.createAtomicStatistics(any(), anyString())).thenReturn(statistics);
     stats = new LuceneIndexStats(statsFactory, "region-index");
 

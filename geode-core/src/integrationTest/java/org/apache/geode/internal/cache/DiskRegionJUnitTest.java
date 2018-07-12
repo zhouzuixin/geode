@@ -71,6 +71,8 @@ import org.apache.geode.internal.cache.entries.DiskEntry;
 import org.apache.geode.internal.cache.eviction.EvictionCounters;
 import org.apache.geode.internal.cache.persistence.DiskRecoveryStore;
 import org.apache.geode.internal.cache.persistence.UninterruptibleFileChannel;
+import org.apache.geode.stats.common.internal.cache.CachePerfStats;
+import org.apache.geode.stats.common.internal.cache.DiskRegionStats;
 import org.apache.geode.test.dunit.IgnoredException;
 import org.apache.geode.test.dunit.Wait;
 import org.apache.geode.test.junit.rules.ExecutorServiceRule;

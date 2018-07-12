@@ -36,7 +36,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import org.apache.geode.compression.Compressor;
 import org.apache.geode.internal.DSCODE;
-import org.apache.geode.internal.cache.CachePerfStats;
 import org.apache.geode.internal.cache.DiskId;
 import org.apache.geode.internal.cache.EntryEventImpl;
 import org.apache.geode.internal.cache.RegionEntryContext;
@@ -45,6 +44,8 @@ import org.apache.geode.internal.cache.VMCachedDeserializable;
 import org.apache.geode.internal.cache.entries.DiskEntry;
 import org.apache.geode.internal.cache.entries.OffHeapRegionEntry;
 import org.apache.geode.internal.cache.entries.VersionedStatsDiskRegionEntryOffHeap;
+import org.apache.geode.stats.common.internal.cache.CachePerfStats;
+import org.apache.geode.stats.common.internal.offheap.OffHeapStorageStats;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("*.UnitTest")
@@ -58,7 +59,7 @@ public class OffHeapRegionEntryHelperJUnitTest {
   @Before
   public void setUp() {
     OutOfOffHeapMemoryListener ooohml = mock(OutOfOffHeapMemoryListener.class);
-    OffHeapMemoryStats stats = mock(OffHeapMemoryStats.class);
+    OffHeapStorageStats stats = mock(OffHeapStorageStats.class);
 
     ma = MemoryAllocatorImpl.create(ooohml, stats, 1, OffHeapStorage.MIN_SLAB_SIZE * 1,
         OffHeapStorage.MIN_SLAB_SIZE);

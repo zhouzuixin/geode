@@ -21,8 +21,9 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import org.apache.geode.cache.server.ServerLoad;
-import org.apache.geode.internal.cache.tier.sockets.CacheServerStats;
 import org.apache.geode.management.internal.beans.CacheServerBridge;
+import org.apache.geode.stats.common.internal.cache.tier.sockets.CacheServerStats;
+import org.apache.geode.stats.common.statistics.factory.StatsFactory;
 import org.apache.geode.test.junit.categories.JMXTest;
 
 @Category({JMXTest.class})
@@ -33,7 +34,7 @@ public class CacheServerStatsJUnitTest extends MBeanStatsTestCase {
   private CacheServerStats cacheServerStats;
 
   public void init() {
-    cacheServerStats = new CacheServerStats("Test Sock Name");
+    cacheServerStats = StatsFactory.createStatsImpl(CacheServerStats.class, "Test Sock Name");
 
     bridge = new CacheServerBridge();
     bridge.addCacheServerStats(cacheServerStats);
@@ -58,7 +59,8 @@ public class CacheServerStatsJUnitTest extends MBeanStatsTestCase {
     cacheServerStats.incProcessPutTime(startTime);
 
     ServerLoad load = new ServerLoad(1, 1, 1, 1);
-    cacheServerStats.setLoad(load);
+    cacheServerStats.setLoad(load.getConnectionLoad(), load.getLoadPerConnection(),
+        load.getSubscriptionConnectionLoad(), load.getLoadPerSubscriptionConnection());
 
     sample();
 

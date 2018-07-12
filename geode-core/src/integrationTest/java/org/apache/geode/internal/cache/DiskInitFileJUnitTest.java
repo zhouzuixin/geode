@@ -15,8 +15,6 @@
 package org.apache.geode.internal.cache;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -31,8 +29,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import org.apache.geode.Statistics;
-import org.apache.geode.StatisticsFactory;
 import org.apache.geode.internal.cache.persistence.DiskRegionView;
 import org.apache.geode.internal.cache.persistence.DiskStoreID;
 
@@ -47,14 +43,9 @@ public class DiskInitFileJUnitTest {
   public void setUp() throws Exception {
     File testDirectory = temporaryFolder.newFolder("_" + getClass().getSimpleName());
 
-    // Mock statistics factory for creating directory holders.
-    final StatisticsFactory mockStatisticsFactory = mock(StatisticsFactory.class);
-    when(mockStatisticsFactory.createStatistics(any(), anyString()))
-        .thenReturn(mock(Statistics.class));
-
     // Mock disk store impl. All we need to do is return this init file directory.
     mockedDiskStoreImpl = mock(DiskStoreImpl.class);
-    DirectoryHolder holder = new DirectoryHolder(mockStatisticsFactory, testDirectory, 0, 0);
+    DirectoryHolder holder = new DirectoryHolder(testDirectory, 0, 0);
     when(mockedDiskStoreImpl.getInfoFileDir()).thenReturn(holder);
     when(mockedDiskStoreImpl.getDiskStoreID()).thenReturn(mock(DiskStoreID.class));
     when(mockedDiskStoreImpl.getBackupLock()).thenReturn(mock(ReentrantLock.class));

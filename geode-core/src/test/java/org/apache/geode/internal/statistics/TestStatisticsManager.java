@@ -14,9 +14,9 @@
  */
 package org.apache.geode.internal.statistics;
 
-import org.apache.geode.Statistics;
-import org.apache.geode.StatisticsType;
 import org.apache.geode.internal.statistics.platform.OsStatisticsFactory;
+import org.apache.geode.stats.common.statistics.Statistics;
+import org.apache.geode.stats.common.statistics.StatisticsType;
 
 /**
  * @since GemFire 7.0
@@ -25,7 +25,7 @@ public class TestStatisticsManager extends AbstractStatisticsFactory
     implements StatisticsManager, OsStatisticsFactory {
 
   public TestStatisticsManager(final long id, final String name, final long startTime) {
-    super(id, name, startTime);
+    super(new StatisticsTypeFactoryImpl(), id, name, startTime);
   }
 
   @Override
