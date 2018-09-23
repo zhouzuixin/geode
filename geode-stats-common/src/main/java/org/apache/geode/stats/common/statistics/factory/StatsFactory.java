@@ -22,10 +22,7 @@ import java.util.Map;
 import java.util.ServiceLoader;
 
 import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
-import org.reflections.util.FilterBuilder;
 
 import org.apache.geode.stats.common.Stats;
 import org.apache.geode.stats.common.cache.client.internal.ConnectionStats;
@@ -56,11 +53,12 @@ public class StatsFactory {
     classLoadersList.add(ClasspathHelper.staticClassLoader());
 
     /* don't exclude Object.class */
-    Reflections reflections = new Reflections(new ConfigurationBuilder()
-        .setScanners(new SubTypesScanner(false /* don't exclude Object.class */))
-        .setUrls(ClasspathHelper.forClassLoader(classLoadersList.toArray(new ClassLoader[0])))
-        .filterInputsBy(new FilterBuilder()
-            .includePackage("org.apache.geode..*")));
+    // Reflections reflections = new Reflections(new ConfigurationBuilder()
+    // .setScanners(new SubTypesScanner(false /* don't exclude Object.class */))
+    // .setUrls(ClasspathHelper.forClassLoader(classLoadersList.toArray(new ClassLoader[0])))
+    // .filterInputsBy(new FilterBuilder()
+    // .includePackage("org.apache.geode..*")));
+    Reflections reflections = new Reflections("org.apache.geode");
     this.selectedStatsImplementor = selectedStatsImplementor;
     this.statisticsFactory = statisticsFactory;
     initializeStatsImplementations(reflections);

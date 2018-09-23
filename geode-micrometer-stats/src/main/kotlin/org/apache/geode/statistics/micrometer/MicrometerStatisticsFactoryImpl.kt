@@ -26,7 +26,8 @@ import org.apache.geode.stats.common.statistics.StatisticsType
 import org.apache.geode.stats.common.statistics.factory.StatsFactory
 import java.io.Reader
 
-class MicrometerStatisticsFactoryImpl(vararg meterRegistries: MeterRegistry = arrayOf(SimpleMeterRegistry())) : StatisticsFactory {
+class MicrometerStatisticsFactoryImpl @JvmOverloads constructor(vararg meterRegistries: MeterRegistry =
+                                                                        arrayOf(SimpleMeterRegistry())) : StatisticsFactory {
 
     private val micrometerStatisticsManager = MicrometerStatisticsManager.createWithRegistries(meterRegistries)
     private val meterGroupMap = hashMapOf<String, StatisticsType>()

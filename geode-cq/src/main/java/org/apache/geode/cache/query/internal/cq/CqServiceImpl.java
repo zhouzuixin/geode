@@ -167,7 +167,7 @@ public class CqServiceImpl implements CqService {
     this.matchingCqMap = new ConcurrentHashMap<String, HashSet<String>>();
 
     // Initialize the VSD statistics
-    this.cqServiceVsdStats = StatsFactory.createStatsImpl(CqServiceVsdStats.class, null);
+    this.cqServiceVsdStats = StatsFactory.createStatsImpl(CqServiceVsdStats.class, "CqServiceImpl");
     // This won't be converted to a Micrometer stat, as this is not really a stat, but merely a
     // wrapper
     // around a stat Impl

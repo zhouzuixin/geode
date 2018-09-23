@@ -936,9 +936,7 @@ open class MicrometerCachePerfStats @JvmOverloads constructor(statisticsFactory:
     override fun getDiskTasksWaiting(): Int = diskTasksWaitingMeter.getValue().toInt()
 
     @Deprecated("The method is deprecated to be removed, but here until a better stats mechanism is found")
-    override fun getStats(): Statistics {
-        TODO("not implemented")
-    }
+    override fun getStats(): Statistics? = null
 
     @Deprecated("The method is deprecated to be removed, but here until a better stats mechanism is found")
     override fun getClearCount(): Int = regionClearMeter.getValue().toInt()

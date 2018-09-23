@@ -1,4 +1,4 @@
-/*
+package demo/*
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license
  * agreements. See the NOTICE file distributed with this work for additional information regarding
  * copyright ownership. The ASF licenses this file to You under the Apache License, Version 2.0 (the
@@ -23,7 +23,8 @@ fun main(args: Array<String>) {
         setProperty("mcast-port", "0")
         setProperty("statistic-sampling-enabled", "true")
     }
-    val cache = ClientCacheFactory(properties).addPoolLocator("localhost", 44550).create()
+    val cache = ClientCacheFactory(properties).addPoolLocator("35.188.91.8 ", 10334).addPoolLocator("35.202.171.126", 10334).create()
+//    val cache = ClientCacheFactory(properties).addPoolLocator(args[0], args[1].toInt()).addPoolLocator(args[2], args[3].toInt()).create()
 
     val regionFactory = cache.createClientRegionFactory<String, String>(ClientRegionShortcut.PROXY)
     regionFactory.setStatisticsEnabled(true)
@@ -53,7 +54,7 @@ fun main(args: Array<String>) {
                 region1.destroy((value*count).toString())
             }
         }
-//        Thread.sleep(100)
+        Thread.sleep(100)
 
         println("Processed value $count")
 

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://geode.apache.org/schema/cache"
+	   xsi:schemaLocation="http://geode.apache.org/schema/cache http://geode.apache.org/schema/cache/cache-1.0.xsd"
+	   version="1.0" lock-lease="120" lock-timeout="60" search-timeout="300" is-server="true" copy-on-read="false">
+
+	<async-event-queue id="asyncQueue1">
+		<async-event-listener>
+			<class-name>demo.AsyncEventQueueProcessor</class-name>
+		</async-event-listener>
+	</async-event-queue>
+
+	<disk-store name="diskStore1" auto-compact="true" disk-usage-critical-percentage="90" max-oplog-size="1024">
+		<disk-dirs>
+			<disk-dir>/tmp/diskstore1</disk-dir>
+		</disk-dirs>
+	</disk-store>
+
+	<disk-store name="diskStore2" auto-compact="true" disk-usage-critical-percentage="90" max-oplog-size="1024">
+		<disk-dirs>
+			<disk-dir>/tmp/diskstore2</disk-dir>
+		</disk-dirs>
+	</disk-store>
+
+	<region name="Region1">
+		<region-attributes async-event-queue-ids="asyncQueue1" disk-store-name="diskStore1"
+						   data-policy="partition" statistics-enabled="true">
+			<partition-attributes redundant-copies="1" total-num-buckets="113"/>
+			<eviction-attributes>
+				<lru-entry-count action="overflow-to-disk" maximum="55000"/>
+			</eviction-attributes>
+		</region-attributes>
+	</region>
+
+	<region name="Region3">
+		<region-attributes disk-store-name="diskStore2"
+						   data-policy="partition" statistics-enabled="true">
+			<partition-attributes startup-recovery-delay="10000" redundant-copies="1" total-num-buckets="113"/>
+			<eviction-attributes>
+				<lru-entry-count action="overflow-to-disk" maximum="75000"/>
+			</eviction-attributes>
+		</region-attributes>
+	</region>
+</cache>
+

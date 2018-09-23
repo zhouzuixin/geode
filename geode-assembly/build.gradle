@@ -251,7 +251,14 @@ def cp = {
         it.contains('lucene-queryparser') ||
         it.contains('lucene-analyzers-phonetic') ||
 
-        it.contains('micrometer-stats') ||
+        it.contains('micrometer') ||
+        it.contains('guava') ||
+        it.contains('kotlin') ||
+        it.contains('reflections') ||
+        it.contains('javassist') ||
+        it.contains('commons-modeler') ||
+        it.contains('mx4j') ||
+        it.contains('Latency') ||
 
         // dependencies from geode-protobuf
         it.contains('protobuf-java') ||

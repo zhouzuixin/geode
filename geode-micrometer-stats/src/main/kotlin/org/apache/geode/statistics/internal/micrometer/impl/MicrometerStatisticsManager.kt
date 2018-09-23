@@ -91,15 +91,15 @@ object MicrometerStatisticsManager : StatisticsManager {
 
     private fun createCompositeRegistry(): CompositeMeterRegistry {
         val compositeMeterRegistry = CompositeMeterRegistry(Clock.SYSTEM)
-        if (System.getProperty("geode.metrics.influxdb.enabled")?.toBoolean() == true) {
+//        if (System.getProperty("geode.metrics.influxdb.enabled")?.toBoolean() == true) {
             compositeMeterRegistry.add(createInfluxDB())
-        }
-        if (System.getProperty("geode.metrics.prometheus.enabled")?.toBoolean() == true) {
-            compositeMeterRegistry.add(createPrometheus())
-        }
-        if (System.getProperty("geode.metrics.jmx.enabled")?.toBoolean() == true) {
-            compositeMeterRegistry.add(createJMX())
-        }
+//        }
+//        if (System.getProperty("geode.metrics.prometheus.enabled")?.toBoolean() == true) {
+//            compositeMeterRegistry.add(createPrometheus())
+//        }
+//        if (System.getProperty("geode.metrics.jmx.enabled")?.toBoolean() == true) {
+//            compositeMeterRegistry.add(createJMX())
+//        }
         return compositeMeterRegistry
     }
 
@@ -119,7 +119,7 @@ object MicrometerStatisticsManager : StatisticsManager {
             override fun get(k: String): String? = null
             override fun uri(): String = "http://" +
                     "${System.getProperty("geode.metrics.influxdb.address")
-                            ?: "35.188.47.210"}:8086"
+                            ?: "localhost"}:8086"
         }
         return InfluxMeterRegistry(config, Clock.SYSTEM)
     }

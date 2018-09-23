@@ -14,17 +14,18 @@
  */
 package org.apache.geode.statistics.wan
 
-import org.apache.geode.stats.common.internal.cache.wan.GatewaySenderStats
-import org.apache.geode.stats.common.statistics.Statistics
-import org.apache.geode.stats.common.statistics.StatisticsFactory
 import org.apache.geode.statistics.internal.micrometer.impl.CounterStatisticMeter
 import org.apache.geode.statistics.internal.micrometer.impl.GaugeStatisticMeter
 import org.apache.geode.statistics.internal.micrometer.impl.MicrometerMeterGroup
 import org.apache.geode.statistics.internal.micrometer.impl.TimerStatisticMeter
+import org.apache.geode.statistics.micrometer.MicrometerStatsImplementer
 import org.apache.geode.statistics.util.NOW_NANOS
+import org.apache.geode.stats.common.internal.cache.wan.GatewaySenderStats
+import org.apache.geode.stats.common.statistics.Statistics
+import org.apache.geode.stats.common.statistics.StatisticsFactory
 
 open class MicrometerGatewaySenderStats @JvmOverloads constructor(statisticsFactory: StatisticsFactory, private val queueName: String, private val groupName: String = "GatewayReceiverStats-$queueName") :
-        MicrometerMeterGroup(statisticsFactory, groupName), GatewaySenderStats {
+    MicrometerMeterGroup(statisticsFactory, groupName), GatewaySenderStats, MicrometerStatsImplementer {
 
 
     override fun getGroupTags(): Array<String> = arrayOf("gatewaySenderName", queueName)

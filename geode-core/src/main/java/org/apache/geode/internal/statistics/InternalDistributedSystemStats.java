@@ -42,7 +42,8 @@ public class InternalDistributedSystemStats {
    * The sampler for this DistributedSystem.
    */
   private GemFireStatSampler sampler = null;
-  private FunctionServiceStats functionServiceStats;
+  private FunctionServiceStats functionServiceStats =
+      StatsFactory.createStatsImpl(FunctionServiceStats.class, "FunctionExecution");
   private boolean statsDisabled;
 
   private StatisticsFactory statisticsFactory = StatsFactory.getStatisticsFactory();
@@ -50,10 +51,7 @@ public class InternalDistributedSystemStats {
   private InternalDistributedSystemStats() {}
 
   public static InternalDistributedSystemStats createInstance(boolean statsDisabled) {
-
     singleton.statsDisabled = statsDisabled;
-    singleton.functionServiceStats =
-        StatsFactory.createStatsImpl(FunctionServiceStats.class, "FunctionExecution");
     return singleton;
   }
 
@@ -85,6 +83,7 @@ public class InternalDistributedSystemStats {
     FunctionStats stats = functionExecutionStatsMap.get(textId);
     if (stats == null) {
       stats = StatsFactory.createStatsImpl(FunctionStats.class, textId);
+      System.out.println("stats = " + stats+ " textId = "+textId);
       FunctionStats oldStats = functionExecutionStatsMap.putIfAbsent(textId, stats);
       if (oldStats != null) {
         stats.close();
