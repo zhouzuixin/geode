@@ -63,6 +63,7 @@ public class ProcessManager {
 
   public synchronized void launchVM(String version, int vmNum, boolean bouncedVM)
       throws IOException {
+    //TODO: why do we need this gaurd? May be vm.launch should handle it
     if (processes.containsKey(vmNum)) {
       throw new IllegalStateException("VM " + vmNum + " is already running.");
     }

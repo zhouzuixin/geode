@@ -77,6 +77,14 @@ public class RMIException extends GemFireException {
     this.vm = vm;
   }
 
+  public RMIException(org.apache.geode.test.dunit2.VM vm, String className, String methodName, Throwable cause) {
+    super("While invoking " + className + "." + methodName + " in " + vm, cause);
+    this.cause = cause;
+    this.className = className;
+    this.methodName = methodName;
+    //this.vm = vm;
+  }
+
   /**
    * Creates a new <code>RMIException</code> to indicate that an exception of a given type was
    * thrown while invoking a given method.
@@ -92,6 +100,18 @@ public class RMIException extends GemFireException {
     super("While invoking " + className + "." + methodName + " in " + vm,
         new HokeyException(cause, stackTrace));
     this.vm = vm;
+    this.cause = cause;
+    this.className = className;
+    this.methodName = methodName;
+    // this.exceptionClassName = exceptionClassName; assignment has no effect
+    this.stackTrace = stackTrace;
+  }
+
+  public RMIException(org.apache.geode.test.dunit2.VM vm, String className, String methodName, Throwable cause,
+                      String stackTrace) {
+    super("While invoking " + className + "." + methodName + " in " + vm,
+        new HokeyException(cause, stackTrace));
+//    this.vm = vm;
     this.cause = cause;
     this.className = className;
     this.methodName = methodName;
