@@ -8,6 +8,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.SystemOutRule;
 
+import org.apache.geode.test.dunit.standalone.VersionManager;
+
 public class VMTest {
 
   @Rule
@@ -32,7 +34,8 @@ public class VMTest {
   public void  testInvokeReturnsValueFromCallable() throws IOException {
     final String message = "Hello! World";
 
-    VM vm = new VM().launch();
+    ChildVMLauncher childVMLauncher = new ChildVMLauncher(new VersionManager());
+    VM vm = new VM(childVMLauncher).launch();
     String result = vm.invoke(() -> message);
 
     assertThat(result).isEqualTo(message);

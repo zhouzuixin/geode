@@ -1,7 +1,10 @@
 package org.apache.geode.test.dunit2;
 
 import java.io.IOException;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.concurrent.Callable;
 
 import hydra.MethExecutorResult;
@@ -13,11 +16,13 @@ import org.apache.geode.test.dunit.SerializableCallable;
 import org.apache.geode.test.dunit.SerializableCallableIF;
 import org.apache.geode.test.dunit.SerializableRunnable;
 import org.apache.geode.test.dunit.SerializableRunnableIF;
+import org.apache.geode.test.dunit.standalone.BounceResult;
 import org.apache.geode.test.dunit.standalone.RemoteDUnitVMIF;
+import org.apache.geode.test.dunit.standalone.VersionManager;
 
 public class VM {
   private ChildVMLauncher launcher;
-  private int id = 1;
+  private int id;
   private boolean alive = false;
 
   private Process process;
@@ -26,7 +31,13 @@ public class VM {
   public VM() {
 
   }
-  public VM(DUnitEnvConfig config, ChildVMLauncher launcher) {
+  public VM(int id, Process process, RemoteDUnitVMIF stub) {
+    this.id = id;
+    this.process = process;
+    this.stub = stub;
+  }
+
+  public VM(ChildVMLauncher launcher) {
     this.launcher = launcher;
   }
 
@@ -37,6 +48,26 @@ public class VM {
   public VM launch() throws IOException {
     alive = true;
     process = launcher.launch(1, "0", "0", "", 0);
+
+    //get the RMI stub
+
+    try {
+      if (!process.is(STARTUP_TIMEOUT)) {
+        throw new RuntimeException(STARTUP_TIMEOUT_MESSAGE);
+      }
+
+      Registry registry = LocateRegistry.createRegistry(rmiPort);
+      stub = (RemoteDUnitVMIF) registry.lookup(
+              org.apache.geode.test.dunit.VM.getVMName(VersionManager.CURRENT_VERSION, id));
+
+
+    } catch (RemoteException | NotBoundException e) {
+      throw new RuntimeException("could not lookup name", e);
+    } catch (InterruptedException e) {
+      throw new RuntimeException("Failed waiting for VM", e);
+    }
+  }
+
     return this;
   }
 

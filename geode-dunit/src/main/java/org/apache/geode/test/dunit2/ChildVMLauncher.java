@@ -13,6 +13,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.apache.commons.io.FileUtils;
+
 import org.apache.geode.distributed.ConfigurationProperties;
 import org.apache.geode.distributed.internal.DistributionConfig;
 import org.apache.geode.distributed.internal.InternalLocator;
@@ -42,10 +44,6 @@ public class ChildVMLauncher {
 
     String[] cmd = buildJavaCommand(vmId, geodeVersion, registryHost, registryPort);
     System.out.println("Executing " + Arrays.toString(cmd));
-
-//    if (log4jConfig != null) {
-//      FileUtils.copyFileToDirectory(log4jConfig, workingDir);
-//    }
 
     // TODO - delete directory contents, preferably with commons io FileUtils
     Process process = Runtime.getRuntime().exec(cmd, null, workingDir);
@@ -102,7 +100,6 @@ public class ChildVMLauncher {
     String jreLib = separator + "jre" + separator + "lib" + separator;
     classPath = removeFromPath(classPath, jreLib);
     cmds.add(classPath);
-    cmds.add("-D" + DUnitLauncher.RMI_HOST_PARAM + "=" + registryHost);
     cmds.add("-D" + DUnitLauncher.RMI_PORT_PARAM + "=" + registryPort);
     cmds.add("-D" + DUnitLauncher.VM_NUM_PARAM + "=" + vmId);
     cmds.add("-D" + DUnitLauncher.VM_VERSION_PARAM + "=" + geodeVersion);

@@ -4,4 +4,8 @@ public class DUnitEnvironment {
   public VM getVM(int i) {
     return new VM();
   }
+
+  public VM bounce(int i) {
+    //TODO:
+  }
 }
