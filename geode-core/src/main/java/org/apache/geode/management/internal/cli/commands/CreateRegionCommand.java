@@ -293,6 +293,7 @@ public class CreateRegionCommand extends SingleGfshCommand {
                 regionPath));
       }
       functionArgs.setRegionShortcut(regionShortcut);
+      functionArgs.setRegionAttributes(cache.getRegionAttributes(regionShortcut.toString()));
     } else { // templateRegion != null
       if (!regionExists(cache, templateRegion)) {
         return ResultModel.createError(CliStrings.format(

@@ -155,18 +155,9 @@ public class RegionCreateFunction implements InternalFunction {
     final RegionShortcut regionShortcut = regionCreateArgs.getRegionShortcut();
 
     // create the region factory using the arguments
-    boolean isPartitioned = false;
-    RegionFactory<K, V> factory = null;
-    RegionAttributes<K, V> regionAttributes = null;
-    if (regionShortcut != null) {
-      regionAttributes = cache.getRegionAttributes(regionShortcut.toString());
-      regionCreateArgs.setRegionAttributes(regionAttributes);
-    } else {
-      regionAttributes = regionCreateArgs.getRegionAttributes();
-    }
-
-    isPartitioned = regionAttributes.getPartitionAttributes() != null;
-    factory = cache.createRegionFactory(regionAttributes);
+    RegionAttributes<K, V> regionAttributes = regionCreateArgs.getRegionAttributes();
+    boolean isPartitioned = regionAttributes.getPartitionAttributes() != null;
+    RegionFactory<K, V> factory = cache.createRegionFactory(regionAttributes);
 
     if (isPartitioned) {
       PartitionAttributes<K, V> partitionAttributes =
