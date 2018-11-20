@@ -12,7 +12,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.apache.geode.cache.configuration;
+package org.apache.geode.internal.cache.configuration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,9 +23,13 @@ import org.junit.Test;
 
 import org.apache.geode.cache.EvictionAction;
 import org.apache.geode.cache.ExpirationAction;
+import org.apache.geode.cache.RegionAttributes;
 import org.apache.geode.cache.RegionShortcut;
-import org.apache.geode.internal.cache.configuration.RegionAttributeGetFunction;
-import org.apache.geode.internal.cache.configuration.RegionConfigFactory;
+import org.apache.geode.cache.configuration.ClassNameType;
+import org.apache.geode.cache.configuration.DeclarableType;
+import org.apache.geode.cache.configuration.EnumActionDestroyOverflow;
+import org.apache.geode.cache.configuration.RegionAttributesType;
+import org.apache.geode.cache.configuration.RegionConfig;
 import org.apache.geode.management.internal.cli.domain.ClassName;
 import org.apache.geode.management.internal.cli.functions.RegionFunctionArgs;
 
