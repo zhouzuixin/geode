@@ -24,6 +24,8 @@ import org.junit.Test;
 import org.apache.geode.cache.EvictionAction;
 import org.apache.geode.cache.ExpirationAction;
 import org.apache.geode.cache.RegionShortcut;
+import org.apache.geode.internal.cache.configuration.RegionAttributeGetFunction;
+import org.apache.geode.internal.cache.configuration.RegionConfigFactory;
 import org.apache.geode.management.internal.cli.domain.ClassName;
 import org.apache.geode.management.internal.cli.functions.RegionFunctionArgs;
 

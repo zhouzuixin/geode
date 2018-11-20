@@ -65,8 +65,8 @@ public class CreateRegionCommandPersistsConfigurationDUnitTest {
     gfsh.executeAndAssertThat("create region --name=" + regionName + " --type=REPLICATE")
         .statusIsSuccess();
 
-    server1.getVM().bounce();
-    server2.getVM().bounce();
+    server1.stop();
+    server2.stop();
     server1 = clusterRule.startServerVM(1, "group1", locator.getPort());
     server2 = clusterRule.startServerVM(2, "group2", locator.getPort());
 
@@ -98,8 +98,8 @@ public class CreateRegionCommandPersistsConfigurationDUnitTest {
         + " --enable-statistics=true" + " --enable-async-conflation=true"
         + " --entry-idle-time-expiration=100").statusIsSuccess();
 
-    server1.getVM().bounce();
-    server2.getVM().bounce();
+    server1.stop();
+    server2.stop();
     server1 = clusterRule.startServerVM(1, "group1", locator.getPort());
     server2 = clusterRule.startServerVM(2, "group2", locator.getPort());
 

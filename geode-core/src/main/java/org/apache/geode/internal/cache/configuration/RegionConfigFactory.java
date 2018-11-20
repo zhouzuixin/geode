@@ -12,12 +12,17 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.apache.geode.cache.configuration;
+package org.apache.geode.internal.cache.configuration;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.geode.cache.configuration.ClassNameType;
+import org.apache.geode.cache.configuration.DeclarableType;
+import org.apache.geode.cache.configuration.ExpirationAttributesType;
+import org.apache.geode.cache.configuration.RegionAttributesType;
+import org.apache.geode.cache.configuration.RegionConfig;
 import org.apache.geode.management.internal.cli.functions.RegionFunctionArgs;
 
 public class RegionConfigFactory {
