@@ -540,4 +540,8 @@ public abstract class EvictionAttributes implements DataSerializable {
     return configAttributes;
   }
 
+  public boolean isEmpty() {
+    return getAction() == EvictionAction.NONE && getAlgorithm() == EvictionAlgorithm.NONE;
+  }
+
 }

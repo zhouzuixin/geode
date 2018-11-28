@@ -226,7 +226,9 @@ public class RegionConfigFactory {
     if (args.getEvictionAttributes() != null) {
       addAttribute(regionConfig, a -> a.setEvictionAttributes(
           args.getEvictionAttributes().convertToConfigEvictionAttributes()));
-    } else if (regionAttributes != null && regionAttributes.getEvictionAttributes() != null) {
+    } else if (regionAttributes != null &&
+        regionAttributes.getEvictionAttributes() != null &&
+        !regionAttributes.getEvictionAttributes().isEmpty()) {
       addAttribute(regionConfig, a -> a.setEvictionAttributes(
           regionAttributes.getEvictionAttributes().convertToConfigEvictionAttributes()));
     }

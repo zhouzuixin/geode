@@ -379,6 +379,39 @@ public class CreateRegionCommandPersistsConfigurationDUnitTest {
   }
 
   @Test
+  public void createRegionDoesNotPersistEmptyEvictionAttributes() {
+    String regionName = testName.getMethodName();
+    gfsh.executeAndAssertThat("create region"
+        + " --name=" + regionName
+        + " --type=REPLICATE").statusIsSuccess();
+
+    locator.invoke(() -> {
+      InternalConfigurationPersistenceService cc =
+          ClusterStartupRule.getLocator().getConfigurationPersistenceService();
+      CacheConfig config = cc.getCacheConfig("cluster");
+
+      List<RegionConfig> regions = config.getRegions();
+      assertThat(regions).isNotEmpty();
+      assertThat(regions).hasSize(1);
+
+      List<String> regionNames = Arrays.asList(regionName);
+      regionNames.forEach(name -> {
+        RegionConfig regionConfig = CacheElement.findElement(config.getRegions(), name);
+        assertThat(regionConfig).isNotNull();
+        assertThat(regionConfig.getName()).isEqualTo(name);
+        assertThat(regionConfig.getRegionAttributes())
+            .describedAs("Expecting region attributes to exist")
+            .hasSize(1);
+
+        RegionAttributesType attr = regionConfig.getRegionAttributes().get(0);
+        assertThat(attr.getEvictionAttributes())
+            .describedAs("Eviction attributes should be null for " + name)
+            .isNull();
+      });
+    });
+  }
+
+  @Test
   public void placeholderAEQ() {}
 
   @Test
