@@ -31,13 +31,13 @@ import io.micrometer.jmx.JmxConfig
 import io.micrometer.jmx.JmxMeterRegistry
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
-import io.pivotal.gemfire.micrometer.binder.LoadAvgMetrics
-import io.pivotal.gemfire.micrometer.binder.MemInfoMetrics
-import io.pivotal.gemfire.micrometer.binder.StatMetrics
-import io.pivotal.gemfire.micrometer.procOS.ProcOSLoadAvg
-import io.pivotal.gemfire.micrometer.procOS.ProcOSMemInfo
-import io.pivotal.gemfire.micrometer.procOS.ProcOSReaderFactory
-import io.pivotal.gemfire.micrometer.procOS.ProcOSStat
+//import io.pivotal.gemfire.micrometer.binder.LoadAvgMetrics
+//import io.pivotal.gemfire.micrometer.binder.MemInfoMetrics
+//import io.pivotal.gemfire.micrometer.binder.StatMetrics
+//import io.pivotal.gemfire.micrometer.procOS.ProcOSLoadAvg
+//import io.pivotal.gemfire.micrometer.procOS.ProcOSMemInfo
+//import io.pivotal.gemfire.micrometer.procOS.ProcOSReaderFactory
+//import io.pivotal.gemfire.micrometer.procOS.ProcOSStat
 import org.apache.geode.statistics.internal.micrometer.StatisticsManager
 import org.apache.geode.statistics.internal.micrometer.StatisticsMeterGroup
 import java.io.IOException
@@ -64,10 +64,10 @@ object MicrometerStatisticsManager : StatisticsManager {
         FileDescriptorMetrics().bindTo(meterRegistry)
         ProcessorMetrics().bindTo(meterRegistry)
         UptimeMetrics().bindTo(meterRegistry)
-        val procOSReaderFactory = ProcOSReaderFactory()
-        LoadAvgMetrics(procOSLoadAvg = ProcOSLoadAvg(procOSReaderFactory.getInstance(LoadAvgMetrics.LOAD_AVG))).bindTo(meterRegistry)
-        MemInfoMetrics(procOSMemInfo = ProcOSMemInfo(procOSReaderFactory.getInstance(MemInfoMetrics.MEM_INFO))).bindTo(meterRegistry)
-        StatMetrics(procOSStat = ProcOSStat(procOSReaderFactory.getInstance(StatMetrics.STAT))).bindTo(meterRegistry)
+//        val procOSReaderFactory = ProcOSReaderFactory()
+//        LoadAvgMetrics(procOSLoadAvg = ProcOSLoadAvg(procOSReaderFactory.getInstance(LoadAvgMetrics.LOAD_AVG))).bindTo(meterRegistry)
+//        MemInfoMetrics(procOSMemInfo = ProcOSMemInfo(procOSReaderFactory.getInstance(MemInfoMetrics.MEM_INFO))).bindTo(meterRegistry)
+//        StatMetrics(procOSStat = ProcOSStat(procOSReaderFactory.getInstance(StatMetrics.STAT))).bindTo(meterRegistry)
     }
 
     override fun registerMeterRegistry(meterRegistry: MeterRegistry) {

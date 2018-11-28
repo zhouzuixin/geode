@@ -15,7 +15,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.2.70"
+    kotlin("jvm") version "1.3.10"
 }
 
 group = "org.apache.geode"
@@ -37,7 +37,7 @@ dependencies {
     compile(group = "io.micrometer", name = "micrometer-registry-influx", version = "1.0.6")
     compile(group = "io.micrometer", name = "micrometer-registry-jmx", version = "1.0.6")
     compile(group = "io.micrometer", name = "micrometer-registry-prometheus", version = "1.0.6")
-    compile(group = "test", name = "micrometer-stats", version = "1.0-SNAPSHOT")
+//    compile(group = "test", name = "micrometer-stats", version = "1.0-SNAPSHOT")
 
 }
 
