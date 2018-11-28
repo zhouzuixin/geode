@@ -73,6 +73,7 @@ import org.apache.geode.management.internal.cli.util.RegionPath;
 import org.apache.geode.management.internal.security.ResourceOperation;
 import org.apache.geode.security.ResourcePermission;
 
+// public class CreateRegionCommand extends InternalGfshCommand {
 public class CreateRegionCommand extends SingleGfshCommand {
   @CliCommand(value = CliStrings.CREATE_REGION, help = CliStrings.CREATE_REGION__HELP)
   @CliMetaData(relatedTopic = CliStrings.TOPIC_GEODE_REGION,
