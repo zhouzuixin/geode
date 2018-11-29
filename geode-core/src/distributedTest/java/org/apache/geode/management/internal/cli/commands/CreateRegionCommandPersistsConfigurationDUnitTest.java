@@ -412,33 +412,213 @@ public class CreateRegionCommandPersistsConfigurationDUnitTest {
   }
 
   @Test
-  public void placeholderAEQ() {}
+  public void createRegionPersistsAEQConfig() {
+    String queueId = "queue1";
+    gfsh.executeAndAssertThat(
+        "create async-event-queue --id=" + queueId
+            + " --listener=" + CreateRegionCommandDUnitTest.DummyAEQListener.class.getName())
+        .statusIsSuccess();
 
-  @Test
-  public void placeholderColocation() {}
+    String regionName = testName.getMethodName();
+    gfsh.executeAndAssertThat(
+        "create region --name=" + regionName
+            + " --type=REPLICATE"
+            + " --async-event-queue-id=" + queueId)
+        .statusIsSuccess();
 
-  @Test
-  public void placeholderDiskstores() {
-    // test disk-synchronous
+    locator.invoke(() -> {
+      InternalConfigurationPersistenceService cc =
+          ClusterStartupRule.getLocator().getConfigurationPersistenceService();
+      CacheConfig config = cc.getCacheConfig("cluster");
+
+      List<RegionConfig> regions = config.getRegions();
+      assertThat(regions).isNotEmpty();
+      assertThat(regions).hasSize(1);
+      RegionConfig regionConfig = CacheElement.findElement(regions, regionName);
+      assertThat(regionConfig.getRegionAttributes().get(0).getAsyncEventQueueIds())
+          .contains(queueId);
+    });
   }
 
   @Test
-  public void placeholderPartitionedRegion() {
-    // test disk-synchronous String regionName = testName.getMethodName();
+  public void createRegionWithColocation() {
     String regionName = testName.getMethodName();
+    String colocatedRegionName = regionName + "-colocated";
+    String colocatedRegionFromTemplateName = colocatedRegionName + "-from-template";
+
+    gfsh.executeAndAssertThat("create region"
+        + " --name=" + regionName
+        + " --type=PARTITION");
+    gfsh.executeAndAssertThat("create region"
+        + " --name=" + colocatedRegionName
+        + " --colocated-with=" + regionName
+        + " --type=PARTITION");
+
+    gfsh.executeAndAssertThat("create region"
+        + " --name=" + colocatedRegionFromTemplateName
+        + " --template-region=" + colocatedRegionName);
+
+    locator.invoke(() -> {
+      InternalConfigurationPersistenceService cc =
+          ClusterStartupRule.getLocator().getConfigurationPersistenceService();
+      CacheConfig config = cc.getCacheConfig("cluster");
+
+      List<RegionConfig> regions = config.getRegions();
+      assertThat(regions).isNotEmpty();
+      assertThat(regions).hasSize(3);
+
+      RegionConfig colocatedConfig = CacheElement.findElement(regions, colocatedRegionName);
+      assertThat(
+          colocatedConfig.getRegionAttributes().get(0).getPartitionAttributes().getColocatedWith())
+              .isEqualTo("/" + regionName);
+
+      RegionConfig colocatedConfigFromTemplate = CacheElement.findElement(regions,
+          colocatedRegionFromTemplateName);
+      assertThat(
+          colocatedConfigFromTemplate.getRegionAttributes().get(0).getPartitionAttributes()
+              .getColocatedWith())
+                  .isEqualTo("/" + regionName);
+    });
+  }
+
+  @Test
+  public void createRegionPersistsDiskstores() throws Exception {
+    String regionName = testName.getMethodName();
+    String store = "Store1";
+    gfsh.executeAndAssertThat("create disk-store"
+        + " --name=" + store
+        + " --dir=/tmp/foo").statusIsSuccess();
+
+    // Give disk store time to get created
+    Thread.sleep(2000);
+
+    gfsh.executeAndAssertThat("create region"
+        + " --name=" + regionName
+        + " --type=REPLICATE_PERSISTENT"
+        + " --disk-store=" + store
+    ).statusIsSuccess();
+
+    String regionNameFromTemplate = regionName + "-from-template";
+    gfsh.executeAndAssertThat("create region --name=" + regionNameFromTemplate
+        + " --template-region=" + regionName)
+        .statusIsSuccess();
+
+    locator.invoke(() -> {
+      InternalConfigurationPersistenceService cc =
+          ClusterStartupRule.getLocator().getConfigurationPersistenceService();
+      CacheConfig config = cc.getCacheConfig("cluster");
+
+      List<RegionConfig> regions = config.getRegions();
+      assertThat(regions).isNotEmpty();
+      assertThat(regions).hasSize(2);
+
+      List<String> regionNames = Arrays.asList(regionName, regionNameFromTemplate);
+      regionNames.forEach(name -> {
+        RegionConfig regionConfig = CacheElement.findElement(config.getRegions(), name);
+        assertThat(regionConfig).isNotNull();
+        assertThat(regionConfig.getName()).isEqualTo(name);
+
+        RegionAttributesType regionAttributes = regionConfig.getRegionAttributes().get(0);
+        assertThat(regionAttributes.getDiskStoreName())
+            .isEqualTo(store);
+      });
+    });
+  }
+
+  @Test
+  public void createRegionPersistsPartitionAttributes() {
+    String regionName = testName.getMethodName();
+    String regionFromTemplateName = regionName + "-from-template";
+
     gfsh.executeAndAssertThat("create region"
         + " --name=" + regionName
         + " --type=PARTITION"
-        + " --partition-resolver=" + DummyPartitionResolver.class.getName()
         + " --recovery-delay=1"
+        + " --local-max-memory=1000"
         + " --redundant-copies=1"
         + " --startup-recovery-delay=1"
         + " --total-max-memory=100"
-        + " --total-num-buckets=1"
-        + " --eviction-max-memory=700"
-        + " --eviction-entry-count=7"
-        + " --eviction-object-sizer=" + DummyObjectSizer.class.getName()).statusIsSuccess();
+        + " --total-num-buckets=1").statusIsSuccess();
+    gfsh.executeAndAssertThat("create region"
+        + " --name=" + regionFromTemplateName
+        + " --template-region=" + regionName);
+
+    locator.invoke(() -> {
+      InternalConfigurationPersistenceService cc =
+          ClusterStartupRule.getLocator().getConfigurationPersistenceService();
+      CacheConfig config = cc.getCacheConfig("cluster");
+
+      List<RegionConfig> regions = config.getRegions();
+      assertThat(regions).isNotEmpty();
+      assertThat(regions).hasSize(2);
+
+      List<String> regionNames = Arrays.asList(regionName, regionFromTemplateName);
+      regionNames.forEach(name -> {
+        RegionConfig regionConfig = CacheElement.findElement(config.getRegions(), name);
+        assertThat(regionConfig).isNotNull();
+        assertThat(regionConfig.getName()).isEqualTo(name);
+
+        RegionAttributesType regionAttributes = regionConfig.getRegionAttributes().get(0);
+        RegionAttributesType.PartitionAttributes partitionAttributes =
+            regionAttributes.getPartitionAttributes();
+
+        assertThat(partitionAttributes.getRecoveryDelay())
+            .describedAs("Recovery delay should be 1 for region " + name)
+            .isEqualTo("1");
+        assertThat(partitionAttributes.getLocalMaxMemory())
+            .describedAs("Local max memory should be 1000 for region " + name)
+            .isEqualTo("1000");
+        assertThat(partitionAttributes.getRedundantCopies())
+            .describedAs("Redundant copies should be 1 for region " + name)
+            .isEqualTo("1");
+        assertThat(partitionAttributes.getStartupRecoveryDelay())
+            .describedAs("Startup recovery delay should be 1 for region " + name)
+            .isEqualTo("1");
+        assertThat(partitionAttributes.getTotalMaxMemory())
+            .describedAs("Total max memory should be 100 for region " + name)
+            .isEqualTo("100");
+        assertThat(partitionAttributes.getTotalNumBuckets())
+            .describedAs("Total num buckets should be 1 for region " + name)
+            .isEqualTo("1");
+      });
+    });
   }
+
+  @Test
+  public void createRegionPersistsPartitionResolver() {
+    String regionName = testName.getMethodName();
+
+    gfsh.executeAndAssertThat("create region"
+        + " --name=" + regionName
+        + " --type=PARTITION"
+        + " --partition-resolver=" + DummyPartitionResolver.class.getName()).statusIsSuccess();
+
+    locator.invoke(() -> {
+      InternalConfigurationPersistenceService cc =
+          ClusterStartupRule.getLocator().getConfigurationPersistenceService();
+      CacheConfig config = cc.getCacheConfig("cluster");
+
+      List<RegionConfig> regions = config.getRegions();
+      assertThat(regions).isNotEmpty();
+      assertThat(regions).hasSize(1);
+
+      List<String> regionNames = Arrays.asList(regionName);
+      regionNames.forEach(name -> {
+        RegionConfig regionConfig = CacheElement.findElement(config.getRegions(), name);
+        assertThat(regionConfig).isNotNull();
+        assertThat(regionConfig.getName()).isEqualTo(name);
+
+        RegionAttributesType regionAttributes = regionConfig.getRegionAttributes().get(0);
+        RegionAttributesType.PartitionAttributes partitionAttributes =
+            regionAttributes.getPartitionAttributes();
+
+        assertThat(partitionAttributes.getPartitionResolver().getClassName())
+            .isEqualTo(DummyPartitionResolver.class.getName());
+      });
+    });
+  }
+
+  // TODO test empty partition attributes
 
   @Test
   public void placeholderCustomExpiryClass() {
@@ -449,6 +629,7 @@ public class CreateRegionCommandPersistsConfigurationDUnitTest {
 
   }
 
+  // TODO + " --eviction-entry-count=7"
   @Test
   public void placeHolderDisableCloning() {
     // " --enable-cloning=false"

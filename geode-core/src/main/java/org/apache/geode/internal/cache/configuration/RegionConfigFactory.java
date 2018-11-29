@@ -149,6 +149,8 @@ public class RegionConfigFactory {
 
     if (args.getDiskStore() != null) {
       addAttribute(regionConfig, a -> a.setDiskStoreName(args.getDiskStore()));
+    } else if (regionAttributes != null) {
+      addAttribute(regionConfig, a -> a.setDiskStoreName(regionAttributes.getDiskStoreName()));
     }
 
     if (args.getDiskSynchronous() != null) {
@@ -211,11 +213,16 @@ public class RegionConfigFactory {
       partitionAttributes.setTotalMaxMemory(long2string(partitionArgs.getPrTotalMaxMemory()));
       partitionAttributes.setTotalNumBuckets(int2string(partitionArgs.getPrTotalNumBuckets()));
 
-      DeclarableType partitionResolverType = new DeclarableType();
-      partitionResolverType.setClassName(partitionArgs.getPartitionResolver());
-      partitionAttributes.setPartitionResolver(partitionResolverType);
+      if (partitionArgs.getPartitionResolver() != null) {
+        DeclarableType partitionResolverType = new DeclarableType();
+        partitionResolverType.setClassName(partitionArgs.getPartitionResolver());
+        partitionAttributes.setPartitionResolver(partitionResolverType);
+      }
 
       addAttribute(regionConfig, a -> a.setPartitionAttributes(partitionAttributes));
+    } else if (regionAttributes != null && regionAttributes.getPartitionAttributes() != null) {
+      addAttribute(regionConfig, a -> a.setPartitionAttributes(
+          regionAttributes.getPartitionAttributes().convertToConfigPartitionAttributes()));
     }
 
     if (args.getGatewaySenderIds() != null && !args.getGatewaySenderIds().isEmpty()) {
